@@ -1,3 +1,18 @@
 spring:
   application:
     name: comunication
+
+springdoc:
+  swagger-ui:
+    url: /openapi.yaml
+
+email:
+  username: ${EMAIL_USERNAME}
+  password: ${EMAIL_PASSWORD}
+  host: ${EMAIL_HOST}
+  port: ${EMAIL_PORT}
+
+sms:
+  account-sid: ${SMS_ACCOUNT_SID}
+  auth-token: ${SMS_AUTH_TOKEN}
+  phone-number: ${SMS_PHONE_NUMBER}

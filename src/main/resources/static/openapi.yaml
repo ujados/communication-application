@@ -1,0 +1,110 @@
+openapi: 3.1.0
+info:
+  title: Messaging API
+  version: 1.0.0
+
+paths:
+  /api/messages:
+    post:
+      summary: Dispatch a message to the correct channel
+      operationId: dispatchMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        '200':
+          description: Message dispatched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendResult'
+
+components:
+  schemas:
+
+    Message:
+      type: object
+      required:
+        - id
+        - channel
+        - recipient
+        - body
+      properties:
+        id:
+          type: string
+        channel:
+          $ref: '#/components/schemas/Channel'
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        subject:
+          type: string
+          nullable: true
+        body:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+
+    Recipient:
+      type: object
+      required:
+        - id
+        - address
+      properties:
+        id:
+          type: string
+        address:
+          type: string
+
+    Channel:
+      oneOf:
+        - $ref: '#/components/schemas/EmailChannel'
+        - $ref: '#/components/schemas/SmsChannel'
+        - $ref: '#/components/schemas/WhatsappChannel'
+      discriminator:
+        propertyName: type
+        mapping:
+          email: '#/components/schemas/EmailChannel'
+          sms: '#/components/schemas/SmsChannel'
+          whatsapp: '#/components/schemas/WhatsappChannel'
+
+    EmailChannel:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [email]
+      required: [type]
+
+    SmsChannel:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [sms]
+      required: [type]
+
+    WhatsappChannel:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [whatsapp]
+      required: [type]
+
+    SendResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        providerId:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: integer
+          format: int64

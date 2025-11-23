@@ -57,3 +57,7 @@ build/
 hs_err_pid*
 replay_pid*
 
+# Environment variables
+.env
+.env.*
+

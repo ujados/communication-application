@@ -1,0 +1,36 @@
+// Email
+{
+  "channel": {
+    "type": "email"
+  },
+  "recipient": {
+    "id": "string",
+    "address": "tu@email.com"
+  },
+  "subject": "hola",
+  "body": "hola mundo"
+}
+
+// SMS
+{
+  "channel": {
+    "type": "sms"
+  },
+  "recipient": {
+    "id": "string",
+    "address": "tuPhone"
+  },
+  "body": "Hola por SMS"
+}
+
+// WhatsApp
+{
+  "channel": {
+    "type": "whatsapp"
+  },
+  "recipient": {
+    "id": "string",
+    "address": "tuPhone"
+  },
+  "body": "Hola por WhatsApp"
+}
