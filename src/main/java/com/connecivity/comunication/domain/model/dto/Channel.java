@@ -1,4 +1,4 @@
-package com.connecivity.comunication.domain.model;
+package com.connecivity.comunication.domain.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

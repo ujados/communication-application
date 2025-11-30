@@ -1,7 +1,7 @@
 package com.connecivity.comunication.infrastructure.sms;
 
-import com.connecivity.comunication.domain.model.Message;
-import com.connecivity.comunication.domain.model.SendResult;
+import com.connecivity.comunication.domain.model.dto.MessageDto;
+import com.connecivity.comunication.domain.model.dto.SendResultDto;
 import com.connecivity.comunication.domain.port.ChannelSender;
 import com.twilio.rest.api.v2010.account.MessageCreator;
 import com.twilio.type.PhoneNumber;
@@ -22,7 +22,7 @@ public class SmsSender implements ChannelSender {
   private String fromNumber;
 
   @Override
-  public CompletionStage<SendResult> send(Message message) {
+  public CompletionStage<SendResultDto> send(MessageDto message) {
     return CompletableFuture.supplyAsync(() -> {
       try {
         MessageCreator creator = creator(new PhoneNumber(message.recipient()
@@ -30,9 +30,9 @@ public class SmsSender implements ChannelSender {
         var twilioResponse = creator.create();
         log.info("SMS sent to {} with SID={}", message.recipient()
           .address(), twilioResponse.getSid());
-        return SendResult.success("twilio-sms");
+        return SendResultDto.success("twilio-sms");
       } catch (Exception e) {
-        return SendResult.failure("twilio-sms", e.getMessage());
+        return SendResultDto.failure("twilio-sms", e.getMessage());
       }
     });
 

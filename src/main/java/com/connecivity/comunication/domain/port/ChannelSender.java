@@ -1,7 +1,7 @@
 package com.connecivity.comunication.domain.port;
 
-import com.connecivity.comunication.domain.model.Message;
-import com.connecivity.comunication.domain.model.SendResult;
+import com.connecivity.comunication.domain.model.dto.MessageDto;
+import com.connecivity.comunication.domain.model.dto.SendResultDto;
 
 import java.util.concurrent.CompletionStage;
 
@@ -14,5 +14,5 @@ import java.util.concurrent.CompletionStage;
 public interface ChannelSender {
   // Method implemented by subclass and uses when not want resilence
   // CompletionStage is new version of old Future
-  CompletionStage<SendResult> send(Message message);
+  CompletionStage<SendResultDto> send(MessageDto message);
 }

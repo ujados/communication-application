@@ -1,7 +1,7 @@
 package com.connecivity.comunication.infrastructure.shared;
 
-import com.connecivity.comunication.domain.model.Message;
-import com.connecivity.comunication.domain.model.SendResult;
+import com.connecivity.comunication.domain.model.dto.MessageDto;
+import com.connecivity.comunication.domain.model.dto.SendResultDto;
 import com.connecivity.comunication.domain.port.ChannelSender;
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -27,12 +27,12 @@ public class ResilientChannelSender implements ChannelSender {
   }
 
   @Override
-  public CompletionStage<SendResult> send(Message message) {
+  public CompletionStage<SendResultDto> send(MessageDto message) {
     //Supplier that returns the CompletionStage of the delegate
-    Supplier<CompletionStage<SendResult>> supplier = () -> delegate.send(message);
+    Supplier<CompletionStage<SendResultDto>> supplier = () -> delegate.send(message);
 
     // `Decorators.ofCompletionStage(...)` is the standard way in Resilience4j to compose policies on `CompletionStage`.
-    Supplier<CompletionStage<SendResult>> decorated = Decorators.ofCompletionStage(supplier)
+    Supplier<CompletionStage<SendResultDto>> decorated = Decorators.ofCompletionStage(supplier)
       .withCircuitBreaker(circuitBreaker)
       .withRetry(retry, scheduler)
       .decorate();
@@ -41,7 +41,7 @@ public class ResilientChannelSender implements ChannelSender {
     // The final `.exceptionally(...)` turns any exceptions into `SendResult.failure(...)` to keep the API consistent
     // (avoid having to catch exceptions in the `MessagingService`).
     return decorated.get()
-      .exceptionally(throwable -> SendResult.failure(circuitBreaker.getName(), unwrapMessage(throwable)));
+      .exceptionally(throwable -> SendResultDto.failure(circuitBreaker.getName(), unwrapMessage(throwable)));
   }
 
   private static String unwrapMessage(Throwable t) {

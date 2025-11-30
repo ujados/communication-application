@@ -1,10 +1,11 @@
 package com.connecivity.comunication.application.services.impl;
 
-import com.connecivity.comunication.domain.MessagingService;
-import com.connecivity.comunication.domain.model.Channel;
-import com.connecivity.comunication.domain.model.Message;
-import com.connecivity.comunication.domain.model.SendResult;
+import com.connecivity.comunication.application.services.MessagingService;
+import com.connecivity.comunication.domain.model.dto.Channel;
+import com.connecivity.comunication.domain.model.dto.MessageDto;
+import com.connecivity.comunication.domain.model.dto.SendResultDto;
 import com.connecivity.comunication.domain.port.ChannelSender;
+import com.connecivity.comunication.domain.repository.MessagingMockServiceRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -20,13 +21,15 @@ public class MessagingServiceImpl implements MessagingService {
   private static final String WHATSAPP_SENDER_COMPONENT = "whatsappSender";
 
   private final Map<String, ChannelSender> senders;
+  private final MessagingMockServiceRepository messagingMockRepository;
 
-  public MessagingServiceImpl(Map<String, ChannelSender> senders) {
+  public MessagingServiceImpl(Map<String, ChannelSender> senders, MessagingMockServiceRepository messagingMockRepository) {
     this.senders = Map.copyOf(senders);
+    this.messagingMockRepository = messagingMockRepository;
   }
 
   @Override
-  public CompletionStage<SendResult> dispatch(Message message) {
+  public CompletionStage<SendResultDto> dispatch(MessageDto message) {
     // Decided channel with pattern matching, can be use strategy patter or other that can evaluate in runtime
     var channelName = switch (message.channel()) {
       case Channel.Email _ -> EMAIL_SENDER_COMPONENT;
@@ -41,6 +44,16 @@ public class MessagingServiceImpl implements MessagingService {
 
     // We delegate: pure function (ideally the sender is a purely transformative function)
     return channelSender.send(message);
+  }
+
+  @Override
+  public void save(MessageDto message) {
+    messagingMockRepository.save(message);
+  }
+
+  @Override
+  public void delete(MessageDto message) {
+    messagingMockRepository.delete(message);
   }
 
 }

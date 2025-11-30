@@ -1,7 +1,7 @@
 package com.connecivity.comunication.infrastructure.email;
 
-import com.connecivity.comunication.domain.model.Message;
-import com.connecivity.comunication.domain.model.SendResult;
+import com.connecivity.comunication.domain.model.dto.MessageDto;
+import com.connecivity.comunication.domain.model.dto.SendResultDto;
 import com.connecivity.comunication.domain.port.ChannelSender;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class EmailSender implements ChannelSender {
   }
 
   @Override
-  public CompletionStage<SendResult> send(Message message) {
+  public CompletionStage<SendResultDto> send(MessageDto message) {
     return CompletableFuture.supplyAsync(() -> {
       try {
         var mime = javaMailSender.createMimeMessage();
@@ -47,11 +47,11 @@ public class EmailSender implements ChannelSender {
         log.info("Email successfully sent to {} with subject '{}'", message.recipient()
           .address(), message.subject());
 
-        return SendResult.success("smtp");
+        return SendResultDto.success("smtp");
 
       } catch (MessagingException e) {
         log.error("Email sending FAILED: {}", e.getMessage());
-        return SendResult.failure("smtp", e.getMessage());
+        return SendResultDto.failure("smtp", e.getMessage());
       }
     });
   }
