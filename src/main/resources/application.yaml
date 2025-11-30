@@ -16,3 +16,38 @@ sms:
   account-sid: ${SMS_ACCOUNT_SID}
   auth-token: ${SMS_AUTH_TOKEN}
   phone-number: ${SMS_PHONE_NUMBER}
+
+management:
+
+  # Para activar anotaciones @Observed, @Timed...
+  observations:
+    annotations:
+      enabled: true
+
+  opentelemetry:
+
+    # Exportación de trazas (OTLP HTTP)
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces   # o grpc://localhost:4317
+#          transport: grpc
+
+    logging:
+      # Exportador OTLP de logs (si usas el appender de Logback)
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/logs   # apuntando al Collector
+
+  # Métricas (Micrometer) -> Collector
+  otlp:
+    metrics:
+      export:
+        endpoint: http://localhost:4318/v1/metrics   # o grpc://localhost:4317
+#        transport: grpc
+        # step: 30s   # opcional, define frecuencia de push
+
+
+  tracing:
+    sampling:
+      probability: 1.0
